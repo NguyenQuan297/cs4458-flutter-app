@@ -277,10 +277,10 @@ class _LoginScreenState
 }
 
 //////////////////////////////////////////////////
-// DASHBOARD (GRID STYLE)
+// DASHBOARD
 //////////////////////////////////////////////////
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   final String email;
   final Function(bool) onThemeChanged;
 
@@ -291,203 +291,365 @@ class DashboardScreen extends StatelessWidget {
   });
 
   @override
+  State<DashboardScreen> createState() =>
+      _DashboardScreenState();
+}
+
+class _DashboardScreenState
+    extends State<DashboardScreen> {
+
+  bool isHovering = false;
+
+  @override
   Widget build(BuildContext context) {
 
     String name =
-    email.split("@")[0];
+    widget.email.split("@")[0];
 
     return Scaffold(
-      appBar: AppBar(
-        title:
-        const Text("Dashboard"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon:
-            const Icon(Icons.logout),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      LoginScreen(
-                        onThemeChanged:
-                        onThemeChanged,
+      body: Stack(
+        children: [
+
+          //////////////////////////////////////////////////
+          // MAIN CONTENT
+          //////////////////////////////////////////////////
+
+          Padding(
+            padding:
+            const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment:
+              CrossAxisAlignment.start,
+              children: [
+
+                //////////////////////////////////////////////////
+                // HEADER
+                //////////////////////////////////////////////////
+
+                Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
+                  children: [
+
+                    MouseRegion(
+                      onEnter: (_) {
+                        setState(() {
+                          isHovering = true;
+                        });
+                      },
+                      child: const Icon(
+                        Icons.menu,
+                        size: 30,
                       ),
+                    ),
+
+                    const Text(
+                      "Dashboard",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight:
+                        FontWeight.bold,
+                      ),
+                    ),
+
+                    IconButton(
+                      icon:
+                      const Icon(Icons.logout),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                LoginScreen(
+                                  onThemeChanged:
+                                  widget
+                                      .onThemeChanged,
+                                ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-              );
-            },
-          )
-        ],
-      ),
 
-      body: Padding(
-        padding:
-        const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment:
-          CrossAxisAlignment.start,
-          children: [
+                const SizedBox(height: 30),
 
-            // Welcome Card
-            Container(
-              padding:
-              const EdgeInsets.all(
-                  20),
-              decoration:
-              BoxDecoration(
-                borderRadius:
-                BorderRadius
-                    .circular(20),
-                gradient:
-                LinearGradient(
-                  colors: Theme.of(context)
-                      .brightness ==
-                      Brightness.dark
-                      ? [
-                    Colors.blueGrey
-                        .shade800,
-                    Colors.black
-                  ]
-                      : [
-                    Colors.blue,
-                    Colors
-                        .lightBlueAccent
+                //////////////////////////////////////////////////
+                // WELCOME CARD
+                //////////////////////////////////////////////////
+
+                Container(
+                  padding:
+                  const EdgeInsets.all(20),
+                  decoration:
+                  BoxDecoration(
+                    borderRadius:
+                    BorderRadius.circular(20),
+                    gradient:
+                    LinearGradient(
+                      colors:
+                      Theme.of(context)
+                          .brightness ==
+                          Brightness.dark
+                          ? [
+                        Colors.blueGrey
+                            .shade800,
+                        Colors.black
+                      ]
+                          : [
+                        Colors.blue,
+                        Colors
+                            .lightBlueAccent
+                      ],
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 30,
+                        child:
+                        Icon(Icons.person),
+                      ),
+                      const SizedBox(
+                          width: 15),
+                      Column(
+                        crossAxisAlignment:
+                        CrossAxisAlignment
+                            .start,
+                        children: [
+                          const Text(
+                            "Welcome",
+                            style:
+                            TextStyle(
+                                color:
+                                Colors.white),
+                          ),
+                          Text(
+                            name,
+                            style:
+                            const TextStyle(
+                              color:
+                              Colors.white,
+                              fontSize: 18,
+                              fontWeight:
+                              FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                //////////////////////////////////////////////////
+                // GRID
+                //////////////////////////////////////////////////
+
+                Expanded(
+                  child: LayoutBuilder(
+                    builder:
+                        (context,
+                        constraints) {
+
+                      int crossAxisCount =
+                      constraints.maxWidth < 700
+                          ? 1
+                          : 3;
+
+                      return GridView.count(
+                        crossAxisCount:
+                        crossAxisCount,
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                        children: [
+
+                          ProCard(
+                            icon: Icons.person,
+                            title: "Profile",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      ProfileScreen(
+                                        email:
+                                        widget.email,
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
+
+                          ProCard(
+                            icon: Icons.settings,
+                            title: "Settings",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      SettingsScreen(
+                                        onThemeChanged:
+                                        widget
+                                            .onThemeChanged,
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
+
+                          ProCard(
+                            icon: Icons.info,
+                            title: "About",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      AboutScreen(
+                                        email:
+                                        widget.email,
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          //////////////////////////////////////////////////
+          // SIDEBAR
+          //////////////////////////////////////////////////
+
+          AnimatedPositioned(
+            duration:
+            const Duration(milliseconds: 300),
+            left: isHovering ? 0 : -220,
+            top: 0,
+            bottom: 0,
+            child: MouseRegion(
+              onExit: (_) {
+                setState(() {
+                  isHovering = false;
+                });
+              },
+              child: Container(
+                width: 220,
+                color: Colors.black,
+                child: Column(
+                  children: [
+
+                    const SizedBox(height: 80),
+
+                    _buildMenuItem(
+                        "Home",
+                        Icons.home, () {}),
+
+                    _buildMenuItem(
+                        "Profile",
+                        Icons.person, () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              ProfileScreen(
+                                email:
+                                widget.email,
+                              ),
+                        ),
+                      );
+                    }),
+
+                    _buildMenuItem(
+                        "Settings",
+                        Icons.settings, () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              SettingsScreen(
+                                onThemeChanged:
+                                widget
+                                    .onThemeChanged,
+                              ),
+                        ),
+                      );
+                    }),
+
+                    _buildMenuItem(
+                        "About",
+                        Icons.info, () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              AboutScreen(
+                                email:
+                                widget.email,
+                              ),
+                        ),
+                      );
+                    }),
+
+                    const Spacer(),
+
+                    _buildMenuItem(
+                        "Logout",
+                        Icons.logout, () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              LoginScreen(
+                                onThemeChanged:
+                                widget
+                                    .onThemeChanged,
+                              ),
+                        ),
+                      );
+                    }),
+
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 30,
-                    child:
-                    Icon(Icons.person),
-                  ),
-                  const SizedBox(
-                      width: 15),
-                  Column(
-                    crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
-                    children: [
-                      const Text(
-                        "Welcome",
-                        style:
-                        TextStyle(
-                            color:
-                            Colors.white),
-                      ),
-                      Text(
-                        name,
-                        style:
-                        const TextStyle(
-                          color:
-                          Colors.white,
-                          fontSize: 18,
-                          fontWeight:
-                          FontWeight
-                              .bold,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
             ),
-
-            const SizedBox(height: 30),
-
-            Expanded(
-              child: LayoutBuilder(
-                builder:
-                    (context,
-                    constraints) {
-
-                  int crossAxisCount =
-                  constraints.maxWidth <
-                      700
-                      ? 1
-                      : 3;
-
-                  return GridView.count(
-                    crossAxisCount:
-                    crossAxisCount,
-                    crossAxisSpacing:
-                    20,
-                    mainAxisSpacing:
-                    20,
-                    children: [
-
-                      ProCard(
-                        icon:
-                        Icons.person,
-                        title:
-                        "Profile",
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) =>
-                                  ProfileScreen(
-                                    email:
-                                    email,
-                                  ),
-                            ),
-                          );
-                        },
-                      ),
-
-                      ProCard(
-                        icon:
-                        Icons.settings,
-                        title:
-                        "Settings",
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) =>
-                                  SettingsScreen(
-                                    onThemeChanged:
-                                    onThemeChanged,
-                                  ),
-                            ),
-                          );
-                        },
-                      ),
-
-                      ProCard(
-                        icon:
-                        Icons.info,
-                        title:
-                        "About",
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) =>
-                                  AboutScreen(
-                                    email:
-                                    email,
-                                  ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+
+  //////////////////////////////////////////////////
+  // SIDEBAR ITEM BUILDER
+  //////////////////////////////////////////////////
+
+  Widget _buildMenuItem(
+      String title,
+      IconData icon,
+      VoidCallback onTap) {
+    return ListTile(
+      leading:
+      Icon(icon, color: Colors.white),
+      title: Text(
+        title,
+        style:
+        const TextStyle(color: Colors.white),
+      ),
+      hoverColor: Colors.white12,
+      onTap: onTap,
+    );
+  }
 }
+
 
 //////////////////////////////////////////////////
 // PRO CARD
@@ -1259,4 +1421,3 @@ class AboutScreen extends StatelessWidget {
     );
   }
 }
-
