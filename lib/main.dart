@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 //////////////////////////////////////////////////
-// LOGIN SCREEN (MODERN CARD STYLE)
+// LOGIN SCREEN
 //////////////////////////////////////////////////
 
 class LoginScreen extends StatefulWidget {
